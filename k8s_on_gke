@@ -1,0 +1,11 @@
+https://logz.io/blog/deploying-kubernetes-gke/
+
+Use this link to install and configure gcloud and kubectl : https://cloud.google.com/sdk/docs/quickstarts
+
+We're using this repo as an example;
+
+https://github.com/kubernetes/examples/tree/master/guestbook
+
+This link provides instructions about the deployments
+
+https://kubernetes.io/docs/tutorials/stateless-application/guestbook/
