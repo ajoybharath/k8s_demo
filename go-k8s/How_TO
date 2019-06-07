@@ -133,13 +133,13 @@ Repeat the steps 1 thorugh 6 to redeploy the applciation
 
 Compile the new binary and copy it to go-k8s/app-code/ folder.
 
-Build the new image and tag it as 2.0.
+Build the new image and tag it as v2.0.
 
-docker build -t <USERNAME>/go-k8s:2.0 .
+docker build -t <USERNAME>/go-k8s:v2.0 .
 
 Publish the new image following the same steps as in Step 3 but using the new version number.
 
-docker push <USERNAME>/go-k8s:2.0
+docker push <USERNAME>/go-k8s:v2.0
 
 Change to the helm-chart directory, where you have the Helm chart files.
 Edit the values.yaml file to replace the current image tag with the new one:
