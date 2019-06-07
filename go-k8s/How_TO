@@ -1,0 +1,156 @@
+Step 0: Obtain The Application Source Code
+To begin the process, clone the repository,
+
+git clone https://github.com/ajoybharath.k8s_demo
+switch to branch minikube-demo and cd to the directory go-k8s 
+
+In this repository you will find the following:
+
+Dockerfile: a text file that contains instructions on how to build a Docker image.
+Each line indicates an instruction and a command for assembling all the pieces that comprise the image.
+
+app-code directory: a folder that contains the application source code and a pre-built binary.
+
+helm-chart directory: a folder that contains the ready-made Helm chart used in this tutorial.
+
+Step 1: Build the application binary
+
+As we studied in Module 3 on building a go application. Please build an application based on the code from the directory
+app-code. It has a go file which you need to build.
+
+If you have Go already installed, you can simply build it with the following command:
+
+GOOS=linux GOARCH=amd64 go build -tags netgo -o http-app
+
+NOTE: Using the -tags netgo option prevents the net package from linking to the host resolver,
+ensuring that the binary is not linked to any system library.
+This is good for containers because we can deploy a very minimal image without any required libraries
+
+Once you're done with the build copy the binary to the go-k8s/app-code/ folder if its already not there.
+
+Step 2: Build The Docker Image
+
+To build the Docker image:
+
+Run the docker build command in the directory containing the Dockerfile.
+Add a tag to identify the current version of the application: 0.1.0. Remember to replace the USERNAME placeholder with your Docker ID.
+
+docker build -t <USERNAME>/go-k8s:0.1.0 .
+
+Step 3: Publish The Docker Image
+
+Now you’ve Docker image, and it contains your application code,
+you can upload it into a public registry. Here we use Docker Hub
+
+docker login
+
+docker push <USERNAME>/go-k8s:0.1.0
+
+But in real time examples we can use any one of the following,
+
+Google Container Registry
+Amazon EC2 Container Registry
+Azure container Registry
+
+Step 4: Create The Helm Chart
+
+To create a brand new chart, you just need to run the helm create command.
+
+This creates a scaffold with sample files that you can modify to build your custom chart.
+
+For this demo, a ready-made Helm chart is already created.
+
+If you examine the repository you just downloaded, there is a directory named helm-chart that already contains the files you need.
+
+Check out the chart’s file structure:
+
+go-k8s
+|-- Chart.yaml
+|-- charts
+|-- templates
+|   |-- NOTES.txt
+|   |-- _helpers.tpl
+|   |-- deployment.yaml
+|   |-- ingress.yaml
+|   `-- service.yaml
+`-- values.yaml
+
+With the scaffolding in place, we’ll perform the following steps:
+
+Edit the values.yaml file
+
+This file declares variables to be passed into the templates.
+We have modified the file to include our Docker image, tag, and service name, ports, type, and database values.
+USERNAME is a placeholder. Remember to replace it with your Docker ID.
+
+Edit the templates/deployment.yaml file
+
+This file contains the instructions to launch the application container.
+
+Step 5: Deploy The Example Application In Kubernetes
+
+Now we've built a Docker image, published it in a container registry and created our own custom Helm chart.
+It’s now time to deploy the example Go application to the Kubernetes cluster.
+To deploy the example application using the current Helm chart,
+
+Make sure that you can connect to your Kubernetes cluster by executing the command below:
+
+kubectl cluster-info
+
+Deploy the Helm chart by executing the following.
+
+helm install -n RELEASE-NAME DIR
+
+RELEASE-NAME & DIR are placeholders, so we'll run as follows:
+
+helm install -n go-k8s ./helm-chart/
+
+This will create a single pod within the cluster.
+
+Once the chart has been installed, you will see a lot of useful information about the deployment.
+The application won’t be available until database configuration is complete.
+
+Run the kubectl get pods command to get a list of running pods:
+
+kubectl get pods
+
+minikube service list
+
+minikube service SERVICE --url
+
+In your default browser, open the url or you can curl to that url
+
+Now we take the deployment to next level:
+
+Step 6: Update The Source Code And The Helm Chart
+
+As a developer, you’ll understand that your application may need new features or bug fixes in the future.
+To release a new Docker image, you only have to perform a few basic steps: change your application source code,
+rebuild and republish the image in your selected container registry.
+Once the new image release has been pushed to the registry, you need to update the Helm chart.
+
+Repeat the steps 1 thorugh 6 to redeploy the applciation
+
+Compile the new binary and copy it to go-k8s/app-code/ folder.
+
+Build the new image and tag it as 0.2.0.
+
+docker build -t <USERNAME>/go-k8s:0.2.0 .
+
+Publish the new image following the same steps as in Step 3 but using the new version number.
+
+docker push <USERNAME>/go-k8s:0.2.0
+
+Change to the helm-chart directory, where you have the Helm chart files.
+Edit the values.yaml file to replace the current image tag with the new one:
+
+Run the helm upgrade command followed by the name of the chart.
+After that, you will see the information about the new deployment.
+
+helm upgrade go-k8s ./helm-chart/
+
+In your default browser, refresh the page to see the changes:
+
+See what revisions have been made to the chart by executing the helm history command:
+
+helm history go-k8s
