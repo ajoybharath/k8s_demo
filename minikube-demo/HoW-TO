@@ -7,7 +7,8 @@ Check https://github.com/kubernetes/minikube for the latest version of Minikube
 Clone this repo and run the following command to setup and configure Minikube
 
 ---
-git clone https://github.com/janakiramm/minikube-demo.git
+git clone https://github.com/ajoybharath.k8s_demo
+switch to branch minikube-demo and cd to the directory go-k8s
 
 ---
 
